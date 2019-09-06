@@ -1,0 +1,16 @@
+{
+  "name": "Weather Buddy",
+  "version": "0.0.1",
+  "manifest_version": 2,
+  "description": "Super simple 'New Tab' page that gives you the basics to start your day with pretty colors",
+  "homepage_url": "http://christieman.com/",
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "chrome_url_overrides": {
+    "newtab": "dist/index.html"
+  },
+  "permissions": ["geolocation", "*://api.christieman.com/*"]
+}

@@ -1,28 +1,255 @@
 <template>
-  <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+  <div
+    class="App"
+    :style="{
+      '--shade_one': theme.shade_one,
+      '--shade_two': theme.shade_two,
+      '--text': theme.text,
+      '--accent': theme.accent,
+    }"
+  >
+    <div class="App__theme">
+      <DuckyThemes :selected="theme.name" :on-theme-change="changeTheme" />
+    </div>
+    <div class="App__clock">
+      <DuckyClock />
+    </div>
+    <div class="App__search">
+      <DuckySearch />
+    </div>
+    <div class="App__breakdown">
+      <DuckyForecast :forecast="forecast" :loading="!init && loading" />
+    </div>
   </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+import { differenceInMinutes, parseISO } from 'date-fns';
+import themes from './constants/themes';
+import apiFetch from './utils/apiFetch';
+import formatWeather from './utils/formatWeather';
+import * as storage from './utils/storage';
+import DuckyClock from './components/DuckyClock.vue';
+import DuckyForecast from './components/DuckyForecast.vue';
+import DuckySearch from './components/DuckySearch.vue';
+import DuckyThemes from './components/DuckyThemes.vue';
+
+const WEATHER_URL = process.env.VUE_APP_WEATHER_API;
+const LOCATION_MAX = 1000 * 60 * 60 * 1;
+
+const formatTitle = weather => `${weather.temperature}° | ${weather.summary}`;
 
 export default {
-  name: 'app',
+  name: 'App',
   components: {
-    HelloWorld
-  }
-}
+    DuckyClock,
+    DuckyForecast,
+    DuckySearch,
+    DuckyThemes,
+  },
+  data() {
+    return {
+      theme: themes[0],
+      forecast: [],
+      init: false,
+      lastCheck: null,
+      loading: true,
+    };
+  },
+  beforeMount() {
+    const theme = storage.get('DASHBOARD_THEME', themes[0]);
+    if (theme) this.theme = theme;
+    this.watcher = navigator.geolocation.watchPosition(
+      this.onUpdateForecast,
+      null,
+      { maximumAge: LOCATION_MAX }
+    );
+  },
+  beforeDestroy() {
+    navigator.geolocation.clearWatch(this.watcher);
+  },
+  methods: {
+    async fetchWeather(position) {
+      this.loading = true;
+      this.forecast = [];
+
+      const cache = storage.get('WEATHER_DETAILS', { ts: new Date() });
+      if (differenceInMinutes(new Date(), parseISO(cache.ts)) < 30) {
+        // eslint-disable-next-line
+        console.log('Loading Weather from Cache');
+        return cache.data;
+      } else {
+        // eslint-disable-next-line
+        console.log('Loading Weather from Dark Sky');
+        const response = await apiFetch(WEATHER_URL, {
+          lat: position.coords.latitude,
+          lng: position.coords.longitude,
+        });
+
+        const { today, upcoming } = formatWeather(response);
+        const forecast = [today, ...upcoming];
+        storage.set('WEATHER_DETAILS', { data: forecast, ts: new Date() });
+        return forecast;
+      }
+    },
+    async onUpdateForecast(position) {
+      if (
+        this.lastCheck &&
+        differenceInMinutes(new Date(), this.lastCheck) < 10
+      ) {
+        return;
+      }
+
+      const forecast = await this.fetchWeather(position);
+      if (forecast[0]) document.title = formatTitle(forecast[0]);
+      this.forecast = forecast;
+      this.loading = false;
+      this.init = true;
+      this.lastCheck = new Date();
+    },
+    changeTheme(theme) {
+      this.theme = theme;
+      storage.set('DASHBOARD_THEME', theme);
+    },
+  },
+};
 </script>
 
-<style>
-#app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
+<style lang="scss">
+:root {
+  --animation_ease: cubic-bezier(0.25, 0.8, 0.5, 1);
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background: #141517;
+  user-select: none;
+}
+
+.App {
+  font-family: 'Work Sans', Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
+  min-height: 100vh;
+  display: flex;
+  flex-flow: column nowrap;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(
+    to bottom right,
+    var(--shade_one),
+    var(--shade_two)
+  );
+  color: var(--text);
+  text-shadow: 2px 2px 3px rgba(0, 0, 0, 0.15);
+
+  &__theme {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+  }
+
+  &__breakdown {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 225px;
+    width: 100%;
+  }
+}
+
+.fade {
+  &-leave-active {
+    transition: all 300ms var(--animation_ease);
+    transition-delay: calc(0.1s * (var(--total) - var(--i)));
+  }
+
+  &-enter-active {
+    transition: all 600ms var(--animation_ease);
+    transition-delay: calc(0.1s * var(--i));
+  }
+
+  &-enter,
+  &-leave-to {
+    opacity: 0;
+  }
+
+  &-leave,
+  &-enter-to {
+    opacity: 1;
+  }
+}
+
+.fade-top-right {
+  &-leave-active {
+    transition: all 200ms var(--animation_ease);
+    transform-origin: top right;
+  }
+
+  &-enter-active {
+    transition: all 200ms var(--animation_ease);
+    transform-origin: top right;
+  }
+
+  &-enter,
+  &-leave-to {
+    transform: scale(0.5);
+    opacity: 0;
+  }
+
+  &-leave,
+  &-enter-to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.slide-fade {
+  &-leave-active {
+    transition: all 400ms var(--animation_ease);
+    transition-delay: calc(100ms * (var(--total) - var(--i)));
+  }
+
+  &-enter-active {
+    transition: all 400ms var(--animation_ease);
+    transition-delay: calc(100ms * var(--i));
+  }
+
+  &-enter,
+  &-leave-to {
+    transform: translateY(25%);
+    opacity: 0;
+  }
+
+  &-leave,
+  &-enter-to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.slide-fade-reverse {
+  &-leave-active {
+    transition: all 400ms var(--animation_ease);
+  }
+
+  &-enter-active {
+    transition: all 400ms var(--animation_ease);
+  }
+
+  &-enter,
+  &-leave-to {
+    transform: translateY(-25%);
+    opacity: 0;
+  }
+
+  &-leave,
+  &-enter-to {
+    transform: translateY(0);
+    opacity: 1;
+  }
 }
 </style>
