@@ -50,7 +50,7 @@ export default {
   &__grid {
     display: grid;
     grid-template-columns: repeat(5, 1fr);
-    grid-gap: 20px 45px;
+    grid-gap: 2vmin 4.5vmin;
     max-width: 1000px;
     margin: 0 auto;
   }

@@ -22,7 +22,7 @@ export default [
   },
   {
     name: 'Fresh Papaya',
-    accent: '#800097',
+    accent: '#ca2822',
     text: 'rgba(60,60,60,0.85)',
     shade_one: '#ED1C24',
     shade_two: '#FCEE21',

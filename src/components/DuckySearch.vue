@@ -1,7 +1,13 @@
 <template>
   <div class="Search">
     <transition name="fade" mode="out-in" appear>
-      <input v-model="query" type="text" autofocus @keyup.enter="onSubmit" />
+      <input
+        v-model="query"
+        type="text"
+        placeholder="Search Google or type a URL"
+        autofocus
+        @keyup.enter="onSubmit"
+      />
     </transition>
   </div>
 </template>
@@ -32,12 +38,16 @@ export default {
     border-radius: 3px;
     box-shadow: none;
     color: var(--text);
-    width: 825px;
-    padding: 10px;
-    font-size: 30px;
+    width: 75vmin;
+    padding: 1vmin;
+    font-size: 3vmin;
     font-weight: 500;
     outline: none;
     transition: box-shadow 300ms;
+
+    &::placeholder {
+      color: rgba(255, 255, 255, 0.3);
+    }
 
     &:focus {
       box-shadow: rgba(0, 0, 0, 0.15) 0px 3px 8px 0px;

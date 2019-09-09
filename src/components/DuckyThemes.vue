@@ -87,6 +87,7 @@ export default {
     border-radius: 5px;
     overflow: hidden;
     transform-origin: top right;
+    z-index: 2;
   }
 
   &__theme {

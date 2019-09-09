@@ -38,13 +38,13 @@ export default {
   }
 
   &__icon {
-    font-size: 70px;
-    margin: 0 0 20px;
+    font-size: 7vmin;
+    margin: 0 0 2vmin;
     text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
   }
 
   &__temp {
-    font-size: 42px;
+    font-size: 4.2vmin;
     font-weight: 700;
   }
 
@@ -67,7 +67,7 @@ export default {
   }
 
   &__name {
-    font-size: 28px;
+    font-size: 2.8vmin;
     font-weight: 300;
   }
 }

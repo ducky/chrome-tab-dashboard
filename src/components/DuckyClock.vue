@@ -2,14 +2,20 @@
   <div class="Clock">
     <transition name="slide-fade-reverse" mode="out-in" appear>
       <div class="Clock__time">
-        <div
+        <transition
           v-for="(digit, i) in time.split('')"
           :key="i"
-          class="Clock__digit"
-          :class="{ 'Clock__digit--space': digit === ' ' }"
+          name="zoom-fade"
+          mode="out-in"
         >
-          {{ digit }}
-        </div>
+          <div
+            :key="`${digit}-${i}`"
+            class="Clock__digit"
+            :class="{ 'Clock__digit--space': digit === ' ' }"
+          >
+            {{ digit }}
+          </div>
+        </transition>
       </div>
     </transition>
     <transition name="slide-fade" mode="out-in" appear>
@@ -46,26 +52,27 @@ export default {
 
 <style lang="scss" scoped>
 .Clock {
-  margin: 0 0 60px;
+  margin: 0 0 5vmin;
+  perspective: 1000;
 
   &__time {
     display: flex;
-    font-size: 225px;
+    font-size: 22.5vmin;
     line-height: 0.8;
     font-weight: 100;
-    margin: 0 0 15px;
+    margin: 0 0 1.5vmin;
   }
 
   &__digit {
-    width: 120px;
+    width: 12vmin;
 
     &--space {
-      width: 50px;
+      width: 5vmin;
     }
   }
 
   &__date {
-    font-size: 34px;
+    font-size: 3.4vmin;
     font-weight: 300;
     line-height: 1;
   }

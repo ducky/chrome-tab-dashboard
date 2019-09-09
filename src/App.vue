@@ -156,7 +156,7 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    height: 225px;
+    height: 22.5vmin;
     width: 100%;
   }
 }
@@ -179,6 +179,30 @@ body {
 
   &-leave,
   &-enter-to {
+    opacity: 1;
+  }
+}
+
+.fade-top-left {
+  &-leave-active {
+    transition: all 200ms var(--animation_ease);
+    transform-origin: top left;
+  }
+
+  &-enter-active {
+    transition: all 200ms var(--animation_ease);
+    transform-origin: top left;
+  }
+
+  &-enter,
+  &-leave-to {
+    transform: scale(0.5);
+    opacity: 0;
+  }
+
+  &-leave,
+  &-enter-to {
+    transform: scale(1);
     opacity: 1;
   }
 }
@@ -249,6 +273,28 @@ body {
   &-leave,
   &-enter-to {
     transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.zoom-fade {
+  &-leave-active {
+    transition: all 120ms var(--animation_ease);
+  }
+
+  &-enter-active {
+    transition: all 120ms var(--animation_ease);
+  }
+
+  &-enter,
+  &-leave-to {
+    transform: scale(0.9);
+    opacity: 0;
+  }
+
+  &-leave,
+  &-enter-to {
+    transform: scale(1);
     opacity: 1;
   }
 }
