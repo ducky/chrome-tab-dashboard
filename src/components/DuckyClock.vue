@@ -41,6 +41,12 @@ export default {
       time: format(new Date(), this.getTimeFormat()),
     };
   },
+  watch: {
+    settings: function() {
+      this.date = format(new Date(), this.getDateFormat());
+      this.time = format(new Date(), this.getTimeFormat());
+    },
+  },
   beforeMount() {
     this.onTick();
     this.tickInterval = setInterval(this.onTick, 250);
@@ -53,10 +59,16 @@ export default {
       return this.settings.formatDate;
     },
     getTimeFormat() {
-      const secondsFormat = this.settings.includeSeconds ? ' ss' : '';
-      return this.settings.formatTime === '24'
-        ? `HH mm${secondsFormat}`
-        : `hh mm${secondsFormat}`;
+      const format = [];
+      if (this.settings.formatTime === '24') {
+        format.push(`HH mm`);
+        format.push(this.settings.formatSeconds);
+      } else {
+        format.push(`hh mm`);
+        format.push(this.settings.formatSeconds);
+        format.push(this.settings.formatSuffix);
+      }
+      return format.filter(s => s !== ' ').join(' ');
     },
     onTick() {
       this.time = format(new Date(), this.getTimeFormat());
@@ -72,9 +84,10 @@ export default {
 
   &__time {
     display: flex;
+    font-family: var(--font_digits);
     font-size: 22.5vmin;
-    line-height: 0.8;
     font-weight: 100;
+    line-height: 0.8;
     margin: 0 0 1.5vmin;
   }
 
@@ -87,6 +100,7 @@ export default {
   }
 
   &__date {
+    font-family: var(--font_digits);
     font-size: 3.4vmin;
     font-weight: 300;
     line-height: 1;

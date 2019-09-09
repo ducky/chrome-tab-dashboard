@@ -2,10 +2,9 @@
   <div
     class="App"
     :style="{
-      '--shade_one': theme.shade_one,
-      '--shade_two': theme.shade_two,
-      '--text': theme.text,
       '--accent': theme.accent,
+      '--background': theme.background,
+      '--text': theme.text,
     }"
   >
     <div class="App__actions App__actions-left">
@@ -37,8 +36,9 @@ import DuckyThemes from './components/DuckyThemes.vue';
 const DEFAULT_SETTINGS = {
   formatDate: 'EEEE, LLLL d',
   formatTime: '12',
-  includeSeconds: true,
-  theme: themes[0].name,
+  formatSeconds: 'ss',
+  formatSuffix: ' ',
+  theme: themes.basic[0].name,
 };
 const KEY_SETTINGS = 'DASHBOARD_SETTINGS';
 const KEY_WEATHER = 'WEATHER_CACHE';
@@ -62,7 +62,7 @@ export default {
       lastCheck: null,
       loading: true,
       settings: DEFAULT_SETTINGS,
-      theme: themes[0].name,
+      theme: themes.basic[0].name,
     };
   },
   async beforeMount() {
@@ -129,7 +129,8 @@ export default {
     async loadSettings() {
       this.settings = await storage.get(KEY_SETTINGS, DEFAULT_SETTINGS);
       this.theme =
-        themes.find(t => t.name === this.settings.theme) || themes[0];
+        themes.master.find(t => t.name === this.settings.theme) ||
+        themes.basic[0];
     },
     async saveSettings() {
       await storage.set(KEY_SETTINGS, this.settings);
@@ -145,6 +146,8 @@ export default {
 <style lang="scss">
 :root {
   --animation_ease: cubic-bezier(0.25, 0.8, 0.5, 1);
+  --font_digits: 'Work Sans', sans-serif;
+  --font_type: 'Work Sans', sans-serif;
 }
 
 body {
@@ -155,7 +158,7 @@ body {
 }
 
 .App {
-  font-family: 'Work Sans', Arial, sans-serif;
+  font-family: var(--font_type);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
@@ -164,11 +167,7 @@ body {
   flex-flow: column nowrap;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(
-    to bottom right,
-    var(--shade_one),
-    var(--shade_two)
-  );
+  background: var(--background);
   color: var(--text);
   text-shadow: 2px 2px 3px rgba(0, 0, 0, 0.15);
 
