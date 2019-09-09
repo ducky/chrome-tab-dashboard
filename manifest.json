@@ -12,5 +12,5 @@
   "chrome_url_overrides": {
     "newtab": "dist/index.html"
   },
-  "permissions": ["geolocation", "*://api.christieman.com/*"]
+  "permissions": ["geolocation", "storage", "*://api.christieman.com/*"]
 }
