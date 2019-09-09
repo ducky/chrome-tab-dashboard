@@ -8,14 +8,14 @@
       '--accent': theme.accent,
     }"
   >
-    <div class="App__theme">
-      <DuckyThemes :selected="theme.name" :on-theme-change="changeTheme" />
+    <div class="App__actions App__actions-left">
+      <DuckySettings :settings="settings" :on-setting-change="updateSetting" />
+    </div>
+    <div class="App__actions App__actions-right">
+      <DuckyThemes :selected="theme.name" :on-theme-change="updateTheme" />
     </div>
     <div class="App__clock">
-      <DuckyClock />
-    </div>
-    <div class="App__search">
-      <DuckySearch />
+      <DuckyClock :settings="settings" />
     </div>
     <div class="App__breakdown">
       <DuckyForecast :forecast="forecast" :loading="!init && loading" />
@@ -31,9 +31,17 @@ import formatWeather from './utils/formatWeather';
 import * as storage from './utils/storage';
 import DuckyClock from './components/DuckyClock.vue';
 import DuckyForecast from './components/DuckyForecast.vue';
-import DuckySearch from './components/DuckySearch.vue';
+import DuckySettings from './components/DuckySettings.vue';
 import DuckyThemes from './components/DuckyThemes.vue';
 
+const DEFAULT_SETTINGS = {
+  formatDate: 'EEEE, LLLL d',
+  formatTime: '12',
+  includeSeconds: true,
+  theme: themes[0].name,
+};
+const KEY_SETTINGS = 'DASHBOARD_SETTINGS';
+const KEY_WEATHER = 'WEATHER_CACHE';
 const WEATHER_URL = process.env.VUE_APP_WEATHER_API;
 const LOCATION_MAX = 1000 * 60 * 60 * 1;
 
@@ -44,26 +52,27 @@ export default {
   components: {
     DuckyClock,
     DuckyForecast,
-    DuckySearch,
+    DuckySettings,
     DuckyThemes,
   },
   data() {
     return {
-      theme: themes[0],
-      forecast: [],
       init: false,
+      forecast: [],
       lastCheck: null,
       loading: true,
+      settings: DEFAULT_SETTINGS,
+      theme: themes[0].name,
     };
   },
-  beforeMount() {
-    const theme = storage.get('DASHBOARD_THEME', themes[0]);
-    if (theme) this.theme = theme;
+  async beforeMount() {
     this.watcher = navigator.geolocation.watchPosition(
       this.onUpdateForecast,
       null,
       { maximumAge: LOCATION_MAX }
     );
+    await this.loadSettings();
+    await this.saveSettings();
   },
   beforeDestroy() {
     navigator.geolocation.clearWatch(this.watcher);
@@ -73,7 +82,7 @@ export default {
       this.loading = true;
       this.forecast = [];
 
-      const cache = storage.get('WEATHER_DETAILS', { ts: new Date() });
+      const cache = await storage.get(KEY_WEATHER, { ts: new Date() });
       if (differenceInMinutes(new Date(), parseISO(cache.ts)) < 30) {
         // eslint-disable-next-line
         console.log('Loading Weather from Cache');
@@ -88,7 +97,10 @@ export default {
 
         const { today, upcoming } = formatWeather(response);
         const forecast = [today, ...upcoming];
-        storage.set('WEATHER_DETAILS', { data: forecast, ts: new Date() });
+        await storage.set(KEY_WEATHER, {
+          data: forecast,
+          ts: new Date(),
+        });
         return forecast;
       }
     },
@@ -102,14 +114,29 @@ export default {
 
       const forecast = await this.fetchWeather(position);
       if (forecast[0]) document.title = formatTitle(forecast[0]);
+
       this.forecast = forecast;
       this.loading = false;
       this.init = true;
       this.lastCheck = new Date();
     },
-    changeTheme(theme) {
+    async updateTheme(theme) {
       this.theme = theme;
-      storage.set('DASHBOARD_THEME', theme);
+      this.updateSetting('theme', theme.name);
+    },
+
+    // Settings
+    async loadSettings() {
+      this.settings = await storage.get(KEY_SETTINGS, DEFAULT_SETTINGS);
+      this.theme =
+        themes.find(t => t.name === this.settings.theme) || themes[0];
+    },
+    async saveSettings() {
+      await storage.set(KEY_SETTINGS, this.settings);
+    },
+    async updateSetting(key, value) {
+      this.settings = { ...this.settings, [key]: value };
+      await this.saveSettings();
     },
   },
 };
@@ -145,10 +172,18 @@ body {
   color: var(--text);
   text-shadow: 2px 2px 3px rgba(0, 0, 0, 0.15);
 
-  &__theme {
+  &__actions {
     position: absolute;
     top: 15px;
-    right: 15px;
+    display: flex;
+
+    &-left {
+      left: 15px;
+    }
+
+    &-right {
+      right: 15px;
+    }
   }
 
   &__breakdown {

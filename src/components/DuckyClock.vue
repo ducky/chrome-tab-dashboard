@@ -29,10 +29,16 @@ import { format } from 'date-fns';
 
 export default {
   name: 'Clock',
+  props: {
+    settings: {
+      type: Object,
+      default: () => ({}),
+    },
+  },
   data() {
     return {
-      date: format(new Date(), 'EEEE, LLLL d'),
-      time: format(new Date(), 'HH mm ss'),
+      date: format(new Date(), this.getDateFormat()),
+      time: format(new Date(), this.getTimeFormat()),
     };
   },
   beforeMount() {
@@ -43,8 +49,17 @@ export default {
     clearInterval(this.tickInterval);
   },
   methods: {
+    getDateFormat() {
+      return this.settings.formatDate;
+    },
+    getTimeFormat() {
+      const secondsFormat = this.settings.includeSeconds ? ' ss' : '';
+      return this.settings.formatTime === '24'
+        ? `HH mm${secondsFormat}`
+        : `hh mm${secondsFormat}`;
+    },
     onTick() {
-      this.time = format(new Date(), 'HH mm ss');
+      this.time = format(new Date(), this.getTimeFormat());
     },
   },
 };
