@@ -37,7 +37,7 @@ export default {
     width: 4px;
     height: 55px;
     margin-top: -30px;
-    background: #fff;
+    background: var(--text);
   }
 }
 
