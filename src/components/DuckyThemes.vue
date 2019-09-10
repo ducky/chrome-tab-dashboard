@@ -89,10 +89,10 @@ export default {
     font-size: 28px;
     opacity: 0.8;
     cursor: pointer;
-    transition: opacity 300ms;
+    transition: transform 250ms;
 
     &:hover {
-      opacity: 0.5;
+      transform: scale(0.9);
     }
   }
 
