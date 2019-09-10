@@ -19,6 +19,16 @@
     <div class="App__breakdown">
       <DuckyForecast :forecast="forecast" :loading="!init && loading" />
     </div>
+
+    <div class="App__footer">
+      <a
+        class="App__footer-link"
+        href="https://christieman.com/"
+        target="_blank"
+      >
+        <DuckyIcon class="App__footer-icon" title="Made with <3 by Ducky" />
+      </a>
+    </div>
   </div>
 </template>
 
@@ -29,6 +39,7 @@ import apiFetch from './utils/apiFetch';
 import formatWeather from './utils/formatWeather';
 import * as storage from './utils/storage';
 import DuckyClock from './components/DuckyClock.vue';
+import DuckyIcon from './components/DuckyIcon.vue';
 import DuckyForecast from './components/DuckyForecast.vue';
 import DuckySettings from './components/DuckySettings.vue';
 import DuckyThemes from './components/DuckyThemes.vue';
@@ -52,6 +63,7 @@ export default {
   components: {
     DuckyClock,
     DuckyForecast,
+    DuckyIcon,
     DuckySettings,
     DuckyThemes,
   },
@@ -192,6 +204,27 @@ body {
     justify-content: center;
     height: 22.5vmin;
     width: 100%;
+  }
+
+  &__footer {
+    position: absolute;
+    bottom: 15px;
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+
+    &-link {
+      color: var(--accent);
+    }
+
+    &-icon {
+      margin: 0 5px;
+      transition: transform 250ms;
+
+      &:hover {
+        transform: scale(0.9);
+      }
+    }
   }
 }
 
