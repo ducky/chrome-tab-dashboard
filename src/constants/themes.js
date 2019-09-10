@@ -1,7 +1,7 @@
 import bumble_bee from '../assets/bumble_bee.png';
-import first_aid from '../assets/first_aid.png';
 import hacker from '../assets/hacker.png';
 import hex from '../assets/hex.png';
+import pillow from '../assets/pillow.png';
 
 const basic = [
   {
@@ -69,22 +69,6 @@ const basic = [
 const fancy = [
   {
     accent: '#5aacc8',
-    background: `url('${first_aid}')`,
-    name: 'First Aid',
-    text: 'rgba(60,60,60,0.85)',
-  },
-  {
-    accent: '#5aacc8',
-    background: `linear-gradient(
-      to bottom right,
-      rgba(0,0,0,0.70),
-      rgba(0,0,0,0.70)
-    ), url('${first_aid}')`,
-    name: 'First Aid (Night)',
-    text: 'rgba(255,255,255,0.85)',
-  },
-  {
-    accent: '#5aacc8',
     background: `linear-gradient(
       to bottom right,
       rgba(200,200,200,0.65),
@@ -110,14 +94,24 @@ const fancy = [
     text: '#786F54',
   },
   {
-    accent: '#44AD88',
+    accent: '#c9ceca',
     background: `linear-gradient(
       to bottom right,
       rgba(0,0,0,0.60),
       rgba(0,0,0,0.60)
     ), url('${hacker}')`,
-    name: 'Hacker',
-    text: '#478FA1',
+    name: 'Hackerman',
+    text: '#35cb5e',
+  },
+  {
+    accent: '#E6D38F',
+    background: `linear-gradient(
+      to bottom right,
+      rgba(60, 31, 81, 0.75),
+      rgba(60, 31, 81, 0.75)
+    ), url('${pillow}')`,
+    name: 'Pillowfort',
+    text: '#e6e4f2',
   },
 ].sort((a, b) => a.name.localeCompare(b.name));
 
