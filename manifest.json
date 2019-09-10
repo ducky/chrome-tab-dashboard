@@ -1,8 +1,8 @@
 {
-  "name": "Weather Buddy",
+  "name": "Clear Skies",
   "version": "0.0.3",
   "manifest_version": 2,
-  "description": "Beautiful 'New Tab' page that helps you stay on time with a clock, weather, and pretty colors",
+  "description": "Beautiful 'New Tab' page that helps you stay on time the current time, weather, and pretty colors",
   "homepage_url": "http://christieman.com/",
   "icons": {
     "16": "icons/icon16.png",
