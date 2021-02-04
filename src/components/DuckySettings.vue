@@ -114,7 +114,6 @@ export default {
 
   &__toggle {
     font-size: 28px;
-    opacity: 0.8;
     cursor: pointer;
     transition: transform 250ms;
 

@@ -32,7 +32,7 @@ const basic = [
       #FCEE21
     )`,
     name: 'Fresh Papaya',
-    text: '#cdcdcd',
+    text: 'rgba(255,255,255,0.75)',
   },
   {
     accent: '#ede594',
